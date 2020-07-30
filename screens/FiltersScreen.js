@@ -1,85 +1,88 @@
-/** @format */
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, Switch, Platform } from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useDispatch } from 'react-redux';
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { View, Text, StyleSheet, Switch, Platform } from 'react-native'
-import HeaderButton from '../components/HeaderButton'
-import { HeaderButtons, Item } from 'react-navigation-header-buttons'
-import Colors from '../constants/Colors'
-const FilterSwitch = (props) => {
+import HeaderButton from '../components/HeaderButton';
+import Colors from '../constants/Colors';
+import { setFilters } from '../store/actions/meals';
+
+const FilterSwitch = props => {
     return (
         <View style={styles.filterContainer}>
             <Text>{props.label}</Text>
             <Switch
                 trackColor={{ true: Colors.primaryColor }}
-                thumbColor={
-                    Platform.OS === 'android' ? Colors.primaryColor : ''
-                }
+                thumbColor={Platform.OS === 'android' ? Colors.primaryColor : ''}
                 value={props.state}
                 onValueChange={props.onChange}
             />
         </View>
-    )
-}
+    );
+};
 
-const FiltersScreen = (props) => {
-    const { navigation } = props
-    const [isGlutenFree, setIsGlutenFree] = useState(false)
-    const [isLactoseFree, setIsLactoseFree] = useState(false)
-    const [isVegan, setIsVegan] = useState(false)
-    const [isVegeterian, setIsVegeterian] = useState(false)
+const FiltersScreen = props => {
+    const { navigation } = props;
+
+    const [isGlutenFree, setIsGlutenFree] = useState(false);
+    const [isLactoseFree, setIsLactoseFree] = useState(false);
+    const [isVegan, setIsVegan] = useState(false);
+    const [isVegetarian, setIsVegetarian] = useState(false);
+
+    const dispatch = useDispatch();
 
     const saveFilters = useCallback(() => {
-        const appliedFilter = {
+        const appliedFilters = {
             glutenFree: isGlutenFree,
             lactoseFree: isLactoseFree,
             vegan: isVegan,
-            isVegetarian: isVegeterian,
-        }
-    }, [isGlutenFree, isLactoseFree, isVegan, isVegeterian])
+            vegetarian: isVegetarian
+        };
+
+        dispatch(setFilters(appliedFilters));
+    }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian, dispatch]);
 
     useEffect(() => {
-        navigation.setParams({
-            save: saveFilters,
-        })
-    }, [saveFilters])
+        navigation.setParams({ save: saveFilters });
+    }, [saveFilters]);
 
     return (
         <View style={styles.screen}>
-            <Text style={styles.title}>Available Filters / Restrictions </Text>
+            <Text style={styles.title}>Available Filters / Restrictions</Text>
             <FilterSwitch
-                label='Gluten-free'
+                label="Gluten-free"
                 state={isGlutenFree}
-                onChange={(newValue) => setIsGlutenFree(newValue)}
+                onChange={newValue => setIsGlutenFree(newValue)}
             />
             <FilterSwitch
-                label='Lactose-free'
+                label="Lactose-free"
                 state={isLactoseFree}
-                onChange={(newValue) => setIsLactoseFree(newValue)}
+                onChange={newValue => setIsLactoseFree(newValue)}
             />
             <FilterSwitch
-                label='Vegan'
+                label="Vegan"
                 state={isVegan}
-                onChange={(newValue) => setIsVegan(newValue)}
+                onChange={newValue => setIsVegan(newValue)}
             />
             <FilterSwitch
-                label='Vegeterian'
-                state={isVegeterian}
-                onChange={(newValue) => setIsVegeterian(newValue)}
+                label="Vegetarian"
+                state={isVegetarian}
+                onChange={newValue => setIsVegetarian(newValue)}
             />
         </View>
-    )
-}
+    );
+};
 
-FiltersScreen.navigationOptions = (navData) => {
+FiltersScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Filter Meals',
         headerLeft: (
             <HeaderButtons HeaderButtonComponent={HeaderButton}>
                 <Item
-                    title='Menu'
-                    iconName='ios-menu'
+                    title="Menu"
+                    iconName="ios-menu"
                     onPress={() => {
-                        navData.navigation.toggleDrawer()
+                        navData.navigation.toggleDrawer();
                     }}
                 />
             </HeaderButtons>
@@ -87,35 +90,33 @@ FiltersScreen.navigationOptions = (navData) => {
         headerRight: (
             <HeaderButtons HeaderButtonComponent={HeaderButton}>
                 <Item
-                    title='Save'
-                    iconName='ios-save'
-                    onPress={() => {
-                        navData.navigation.getParam('save')
-                    }}
+                    title="Save"
+                    iconName="ios-save"
+                    onPress={navData.navigation.getParam('save')}
                 />
             </HeaderButtons>
-        ),
-    }
-}
+        )
+    };
+};
 
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        alignItems: 'center',
+        alignItems: 'center'
     },
     title: {
         fontFamily: 'open-sans-bold',
         fontSize: 22,
-        margin: 22,
-        textAlign: 'center',
+        margin: 20,
+        textAlign: 'center'
     },
     filterContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '80%',
-        marginVertical: 10,
-    },
-})
+        marginVertical: 15
+    }
+});
 
-export default FiltersScreen
+export default FiltersScreen;
