@@ -6,5 +6,5 @@ React Native application that lets users browse recipies by different categories
 ![image](https://user-images.githubusercontent.com/22650058/89225986-0854bf00-d590-11ea-9571-a5daa71fe456.png)
 
 # Installation
-yarn install
+yarn install\
 yarn start
